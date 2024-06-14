@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificador de Documentos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+    input, button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: calc(100% - 20px);
+      max-width: 300px;
+      box-sizing: border-box;
+    }
+    .button {
+      background-color: #007BFF;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #0056b3;
+    }
+    .button:active {
+      background-color: #004292;
+    }
+    .text-field {
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid gray;
+      padding-bottom: 5px;
+    }
+    .text-field:focus {
+      border-color: #007BFF;
+      outline: none;
+    }
+    .text-field.error {
+      border-color: red;
+    }
+    .text-field.ok {
+      border-color: green;
+    }
+    #result {
+      font-size: 16px;
+      color: #333;
+    }
+    img {
+      margin-top: 20px;
+      width: 150px;
+    }
+    .developer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="build/dni.ico" alt="DNI Image"> <!-- Cambia 'image.png' por la ruta real de tu imagen -->
+    <h1>Verificador de documentos</h1>
+    <input type="text" id="dni-nie" class="text-field" placeholder="DNI / NIE">
+    <button class="button" onclick="validate()">VALIDAR</button>
+    <p id="result"></p>
+    <div class="developer">Developer: Moisés Jiménez</div>
+  </div>
+
+  <script>
+    const { remote } = require('electron');
+    const { BrowserWindow } = remote;
+
+    function minimize() {
+      const window = remote.getCurrentWindow();
+      window.minimize();
+    }
+
+    function maximize() {
+      const window = remote.getCurrentWindow();
+      if (window.isMaximized()) {
+        window.unmaximize();
+      } else {
+        window.maximize();
+      }
+    }
+
+    function close() {
+      const window = remote.getCurrentWindow();
+      window.close();
+    }
+
+    function validate() {
+      const dniNie = document.getElementById('dni-nie').value.toUpperCase();
+      const result = document.getElementById('result');
+      const textField = document.getElementById('dni-nie');
+
+      if (validateDniNie(dniNie)) {
+        result.textContent = 'El DNI/NIE es válido.';
+        result.style.color = 'green';
+        textField.classList.remove('error');
+        textField.classList.add('ok');
+      } else {
+        result.textContent = 'El DNI/NIE no es válido.';
+        result.style.color = 'red';
+        textField.classList.remove('ok');
+        textField.classList.add('error');
+      }
+    }
+
+    function validateDniNie(dniNie) {
+      const dniRegex = /^[XYZ]?\d{7,8}[A-Z]$/;
+      const nieRegex = /^[XYZ]\d{7,8}[A-Z]$/;
+      const dniLetters = "TRWAGMYFPDXBNJZSQVHLCKE";
+      
+      if (dniRegex.test(dniNie)) {
+        let number = dniNie.slice(0, -1);
+        const letter = dniNie.slice(-1);
+
+        // Prefijo NIE
+        const niePrefix = { X: 0, Y: 1, Z: 2 };
+        if (nieRegex.test(dniNie)) {
+          number = number.replace(/[XYZ]/, match => niePrefix[match]);
+        }
+
+        return dniLetters[number % 23] === letter;
+      }
+
+      return false;
+    }
+  </script>
+</body>
+</html>
