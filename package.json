@@ -1,6 +1,6 @@
 {
   "name": "documentvalid",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "main": "main.js",
   "scripts": {
     "postinstall": "install-app-deps",
@@ -8,14 +8,25 @@
     "pack": "build --dir",
     "dist": "electron-builder"
   },
-  "repository": "https://github.com/MoisesCor/electron-autoupdater",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MoisesCor/electron-autoupdater/releases/download/1.0.2/documentvalid.Setup.1.0.2.exe"
+  },
   "publish": {
     "provider": "github",
+    "owner": "MoisesCor",
+    "repo": "electron-autoupdater",
     "releaseType": "release"
   },
   "build": {
     "appId": "pruebaElectron",
     "asar": true,
+    "files": [
+      "**/*"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
     "dmg": {
       "contents": [
         {
@@ -37,7 +48,9 @@
       ]
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        "nsis"
+      ]
     },
     "nsis": {
       "oneClick": false,
